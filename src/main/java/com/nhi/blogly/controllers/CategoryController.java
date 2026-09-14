@@ -1,13 +1,14 @@
 package com.nhi.blogly.controllers;
 
 import com.nhi.blogly.domain.dtos.CategoryDto;
+import com.nhi.blogly.mappers.CategoryMapper;
+import com.nhi.blogly.services.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -15,9 +16,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryController {
 
+    private final CategoryService categoryService;
+    private final CategoryMapper categoryMapper;
+
     @GetMapping
     public ResponseEntity<List<CategoryDto>> listCategories(){
-        //TODO
+        List<CategoryDto> categories = categoryService.listCategories()
+                .stream().map(categoryMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(categories);
     }
 
 }
