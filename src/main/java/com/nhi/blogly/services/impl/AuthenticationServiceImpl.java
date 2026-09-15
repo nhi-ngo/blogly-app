@@ -1,9 +1,7 @@
 package com.nhi.blogly.services.impl;
 
-import com.nhi.blogly.repositories.UserRepository;
 import com.nhi.blogly.services.AuthenticationService;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,17 +44,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Map<String, Object> claims = new HashMap<>(); //claim is information stored inside the JWT
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiryMs))
-                .signWith(getSigninKey(), SignatureAlgorithm.HS256)
+                .claims(claims)
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + jwtExpiryMs))
+                .signWith(getSigninKey())
                 .compact(); //converts the JWT builder into the actual JWT string
     }
 
     //converts secret string into a cryptographic Key
     private Key getSigninKey() {
-        byte[] keyBytes = secretKey.getBytes();
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
