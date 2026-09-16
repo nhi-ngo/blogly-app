@@ -1,5 +1,7 @@
 package com.nhi.blogly.services.impl;
 
+import com.nhi.blogly.domain.entities.User;
+import com.nhi.blogly.repositories.UserRepository;
 import com.nhi.blogly.services.AuthenticationService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -10,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -24,6 +27,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -59,6 +64,25 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return userDetailsService.loadUserByUsername(username);
     }
 
+    @Override
+    public User register(String name, String email, String password) {
+
+        if (userRepository.existsByEmailIgnoreCase(email)) {
+            throw new IllegalArgumentException(
+                    "Email already registered"
+            );
+        }
+
+        User newUser = User.builder()
+                .name(name)
+                .email(email)
+                .password(passwordEncoder.encode(password))
+                .build();
+
+
+        return userRepository.save(newUser);
+    }
+
     private String extractUsername(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(getSigninKey())
@@ -67,7 +91,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .getPayload();
         return claims.getSubject();
     }
-
 
     //converts secret string into a cryptographic Key
     private SecretKey getSigninKey() {
