@@ -12,6 +12,5 @@ public interface PostMapper {
     @Mapping(target = "author", source = "author")
     @Mapping(target = "category", source = "category")
     @Mapping(target = "tags", source = "tags")
-    @Mapping(target = "postStatus", source = "status")
     PostDto toDto(Post post);
 }
