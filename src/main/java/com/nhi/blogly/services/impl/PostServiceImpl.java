@@ -24,7 +24,7 @@ import java.util.UUID;
 public class PostServiceImpl implements PostService {
 
     private static final int WORDS_PER_MINUTE = 200;
-    
+
     private final PostRepository postRepository;
     private final CategoryService categoryService;
     private final TagService tagService;
@@ -82,6 +82,11 @@ public class PostServiceImpl implements PostService {
         newPost.setTags(new HashSet<>(tags));
 
         return postRepository.save(newPost);
+    }
+
+    @Override
+    public void deletePost(UUID id) {
+        postRepository.deleteById(id);
     }
 
     private Integer calculateReadingTime(String content) {
