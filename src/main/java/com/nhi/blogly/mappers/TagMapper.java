@@ -1,7 +1,7 @@
 package com.nhi.blogly.mappers;
 
 import com.nhi.blogly.domain.PostStatus;
-import com.nhi.blogly.domain.dtos.TagResponse;
+import com.nhi.blogly.domain.dtos.TagDto;
 import com.nhi.blogly.domain.entities.Post;
 import com.nhi.blogly.domain.entities.Tag;
 import org.mapstruct.Mapper;
@@ -15,7 +15,7 @@ import java.util.Set;
 public interface TagMapper {
 
     @Mapping(target = "postCount", source = "posts", qualifiedByName = "calculatePostCount")
-    TagResponse toTagResponse(Tag tag);
+    TagDto toTagDto(Tag tag);
 
     @Named("calculatePostCount")
     default Integer calculatePostCount(Set<Post> posts) {

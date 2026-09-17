@@ -1,7 +1,7 @@
 package com.nhi.blogly.controllers;
 
 import com.nhi.blogly.domain.dtos.CreateTagsRequest;
-import com.nhi.blogly.domain.dtos.TagResponse;
+import com.nhi.blogly.domain.dtos.TagDto;
 import com.nhi.blogly.domain.entities.Tag;
 import com.nhi.blogly.mappers.TagMapper;
 import com.nhi.blogly.services.TagService;
@@ -23,25 +23,25 @@ public class TagController {
     private final TagMapper tagMapper;
 
     @GetMapping
-    public ResponseEntity<List<TagResponse>> getTags() {
+    public ResponseEntity<List<TagDto>> getTags() {
 
         List<Tag> tags = tagService.getTags();
 
-        List<TagResponse> tagResponses = tags.stream()
-                .map(tagMapper::toTagResponse)
+        List<TagDto> tagDtos = tags.stream()
+                .map(tagMapper::toTagDto)
                 .toList();
 
-        return ResponseEntity.ok(tagResponses);
+        return ResponseEntity.ok(tagDtos);
     }
 
     @PostMapping
-    public ResponseEntity<List<TagResponse>> createTags(
+    public ResponseEntity<List<TagDto>> createTags(
             @Valid @RequestBody CreateTagsRequest createTagsRequest) {
 
         List<Tag> savedTags = tagService.createTags(createTagsRequest.getNames());
 
-        List<TagResponse> newTagsResponses = savedTags.stream()
-                .map(tagMapper::toTagResponse)
+        List<TagDto> newTagsResponses = savedTags.stream()
+                .map(tagMapper::toTagDto)
                 .toList();
 
         return new ResponseEntity<>(
