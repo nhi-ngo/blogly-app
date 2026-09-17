@@ -3,6 +3,7 @@ package com.nhi.blogly.services.impl;
 import com.nhi.blogly.domain.entities.Tag;
 import com.nhi.blogly.repositories.TagRepository;
 import com.nhi.blogly.services.TagService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,5 +58,11 @@ public class TagServiceImpl implements TagService {
             }
             tagRepository.deleteById(id);
         }
+    }
+
+    @Override
+    public Tag getTagById(UUID id) {
+        return tagRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Tag not found with id: " + id));
     }
 }
