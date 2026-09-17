@@ -1,8 +1,6 @@
 package com.nhi.blogly.services;
 
-import com.nhi.blogly.domain.dtos.CreateCategoryRequest;
 import com.nhi.blogly.domain.entities.Category;
-import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,4 +12,6 @@ public interface CategoryService {
     Category createCategory(Category category);
 
     void deleteCategory(UUID id);
+
+    Category getCategoryById(UUID id);
 }

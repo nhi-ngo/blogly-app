@@ -3,6 +3,7 @@ package com.nhi.blogly.services.impl;
 import com.nhi.blogly.domain.entities.Category;
 import com.nhi.blogly.repositories.CategoryRepository;
 import com.nhi.blogly.services.CategoryService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
     public Category createCategory(Category category) {
         String categoryName = category.getName();
 
-        if(categoryRepository.existsByNameIgnoreCase(categoryName)) {
+        if (categoryRepository.existsByNameIgnoreCase(categoryName)) {
             throw new IllegalArgumentException(
                     "Category already exists with name: " + categoryName);
         }
@@ -38,11 +39,17 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategory(UUID id) {
         Optional<Category> category = categoryRepository.findById(id);
-        if(category.isPresent()) {
+        if (category.isPresent()) {
             if (!category.get().getPosts().isEmpty()) {
                 throw new IllegalArgumentException("Category has posts associated with it");
             }
             categoryRepository.deleteById(id);
         }
+    }
+
+    @Override
+    public Category getCategoryById(UUID id) {
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + id));
     }
 }
