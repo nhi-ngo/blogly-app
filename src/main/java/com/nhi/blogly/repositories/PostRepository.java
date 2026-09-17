@@ -4,6 +4,7 @@ import com.nhi.blogly.domain.PostStatus;
 import com.nhi.blogly.domain.entities.Category;
 import com.nhi.blogly.domain.entities.Post;
 import com.nhi.blogly.domain.entities.Tag;
+import com.nhi.blogly.domain.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -24,4 +25,6 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
     List<Post> findAllByStatusAndTagsContaining(PostStatus status, Tag tag);
 
     List<Post> findAllByStatus(PostStatus status);
+
+    List<Post> findAllByAuthorAndStatus(User user, PostStatus status);
 }

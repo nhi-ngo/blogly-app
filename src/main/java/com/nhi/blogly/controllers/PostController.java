@@ -2,14 +2,13 @@ package com.nhi.blogly.controllers;
 
 import com.nhi.blogly.domain.dtos.PostDto;
 import com.nhi.blogly.domain.entities.Post;
+import com.nhi.blogly.domain.entities.User;
 import com.nhi.blogly.mappers.PostMapper;
 import com.nhi.blogly.services.PostService;
+import com.nhi.blogly.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +20,7 @@ public class PostController {
 
     private final PostService postService;
     private final PostMapper postMapper;
+    private final UserService userService;
 
     @GetMapping
     public ResponseEntity<List<PostDto>> getPosts(
@@ -33,5 +33,17 @@ public class PostController {
                 .toList();
 
         return ResponseEntity.ok(postDtos);
+    }
+
+    @GetMapping("/drafts")
+    public ResponseEntity<List<PostDto>> getDrafts(@RequestAttribute UUID userId) {
+
+        User loggedInUser = userService.getUserById(userId);
+        List<Post> drafts = postService.getDrafts(loggedInUser);
+        List<PostDto> draftDtos = drafts.stream()
+                .map(postMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(draftDtos);
     }
 }

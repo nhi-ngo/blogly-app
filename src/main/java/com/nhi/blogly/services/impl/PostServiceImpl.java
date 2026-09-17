@@ -4,6 +4,7 @@ import com.nhi.blogly.domain.PostStatus;
 import com.nhi.blogly.domain.entities.Category;
 import com.nhi.blogly.domain.entities.Post;
 import com.nhi.blogly.domain.entities.Tag;
+import com.nhi.blogly.domain.entities.User;
 import com.nhi.blogly.repositories.PostRepository;
 import com.nhi.blogly.services.CategoryService;
 import com.nhi.blogly.services.PostService;
@@ -49,5 +50,10 @@ public class PostServiceImpl implements PostService {
         }
 
         return postRepository.findAllByStatus(PostStatus.PUBLISHED);
+    }
+
+    @Override
+    public List<Post> getDrafts(User user) {
+        return postRepository.findAllByAuthorAndStatus(user, PostStatus.DRAFT);
     }
 }
