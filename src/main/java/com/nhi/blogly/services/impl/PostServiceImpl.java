@@ -2,6 +2,7 @@ package com.nhi.blogly.services.impl;
 
 import com.nhi.blogly.domain.PostStatus;
 import com.nhi.blogly.domain.dtos.CreatePostRequest;
+import com.nhi.blogly.domain.dtos.UpdatePostRequest;
 import com.nhi.blogly.domain.entities.Category;
 import com.nhi.blogly.domain.entities.Post;
 import com.nhi.blogly.domain.entities.Tag;
@@ -10,6 +11,7 @@ import com.nhi.blogly.repositories.PostRepository;
 import com.nhi.blogly.services.CategoryService;
 import com.nhi.blogly.services.PostService;
 import com.nhi.blogly.services.TagService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +71,6 @@ public class PostServiceImpl implements PostService {
         Post newPost = new Post();
         newPost.setTitle(createPostRequest.getTitle());
         newPost.setContent(createPostRequest.getContent());
-        newPost.setTitle(createPostRequest.getTitle());
         newPost.setStatus(createPostRequest.getStatus());
         newPost.setAuthor(user);
         newPost.setReadingTime(calculateReadingTime(createPostRequest.getContent()));
@@ -87,6 +88,29 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deletePost(UUID id) {
         postRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public Post updatePost(UUID id, UpdatePostRequest updatePostRequest) {
+        Post existingPost = postRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found with id " + id));
+
+        String postContent = updatePostRequest.getContent();
+
+        existingPost.setTitle(updatePostRequest.getTitle());
+        existingPost.setContent(postContent);
+        existingPost.setStatus(updatePostRequest.getStatus());
+        existingPost.setReadingTime(calculateReadingTime(postContent));
+
+        Category category = categoryService.getCategoryById(updatePostRequest.getCategoryId());
+        existingPost.setCategory(category);
+
+        Set<UUID> tagIds = updatePostRequest.getTagIds();
+        List<Tag> tags = tagService.getTagByIds(tagIds);
+        existingPost.setTags(new HashSet<>(tags));
+
+        return postRepository.save(existingPost);
     }
 
     private Integer calculateReadingTime(String content) {

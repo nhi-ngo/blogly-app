@@ -2,6 +2,7 @@ package com.nhi.blogly.controllers;
 
 import com.nhi.blogly.domain.dtos.CreatePostRequest;
 import com.nhi.blogly.domain.dtos.PostDto;
+import com.nhi.blogly.domain.dtos.UpdatePostRequest;
 import com.nhi.blogly.domain.entities.Post;
 import com.nhi.blogly.domain.entities.User;
 import com.nhi.blogly.mappers.PostMapper;
@@ -61,6 +62,17 @@ public class PostController {
         PostDto createdPostDto = postMapper.toDto(createdPost);
 
         return new ResponseEntity<>(createdPostDto, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PostDto> updatePost(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdatePostRequest updatePostRequest
+    ) {
+        Post updatedPost = postService.updatePost(id, updatePostRequest);
+        PostDto updatedPostDto = postMapper.toDto(updatedPost);
+
+        return ResponseEntity.ok(updatedPostDto);
     }
 
     @DeleteMapping("/{id}")
