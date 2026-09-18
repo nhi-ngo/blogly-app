@@ -9,6 +9,8 @@ import { AuthProvider, useAuth } from './components/AuthContext';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import EditPostPage from './pages/EditPostPage';
+import PostPage from './pages/PostPage';
+import DraftsPage from './pages/DraftsPage';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
@@ -53,7 +55,28 @@ function AppContent() {
             }
           />
 
+          <Route path="/posts/:id" element={<PostPage isAuthenticated={isAuthenticated} />} />
+
+          <Route
+            path="/posts/:id/edit"
+            element={
+              <ProtectedRoute>
+                <EditPostPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/posts/drafts"
+            element={
+              <ProtectedRoute>
+                <DraftsPage />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="/categories" element={<CategoriesPage isAuthenticated={isAuthenticated} />} />
+
           <Route path="/tags" element={<TagsPage isAuthenticated={isAuthenticated} />} />
         </Routes>
       </main>
