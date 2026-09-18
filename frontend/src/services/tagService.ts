@@ -9,7 +9,7 @@ class TagService {
     return response.data;
   }
 
-  public async createTag(names: string[]): Promise<Tag[]> {
+  public async createTags(names: string[]): Promise<Tag[]> {
     const response = await this.api.post<Tag[]>('/tags', { names });
     return response.data;
   }
