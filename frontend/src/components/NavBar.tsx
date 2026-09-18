@@ -15,11 +15,20 @@ import {
   DropdownItem,
   NavbarBrand,
 } from '@nextui-org/react';
+import { BookDashed, Edit3, LogOut, Plus } from 'lucide-react';
 
-interface NavBarProps {}
+interface NavBarProps {
+  isAuthenticated: boolean;
+  userProfile?: {
+    name: string;
+    avatar?: string;
+  };
+  onLogout: () => void;
+}
 
-const NavBar: React.FC<NavBarProps> = ({}) => {
+const NavBar: React.FC<NavBarProps> = ({ isAuthenticated, userProfile, onLogout }) => {
   const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const menuItems = [
     { name: 'Home', path: '/' },
@@ -28,7 +37,7 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
   ];
 
   return (
-    <Navbar isBordered className="mb-6">
+    <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen} className="mb-6">
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle />
       </NavbarContent>
@@ -47,18 +56,12 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
             Blogly
           </Link>
         </NavbarBrand>
+
         {menuItems.map((item) => (
-          <NavbarItem
-            key={item.path}
-            isActive={location.pathname === item.path}
-          >
+          <NavbarItem key={item.path} isActive={location.pathname === item.path}>
             <Link
               to={item.path}
-              className={`text-sm ${
-                location.pathname === item.path
-                  ? 'text-primary'
-                  : 'text-default-600'
-              }`}
+              className={`text-sm ${location.pathname === item.path ? 'text-primary' : 'text-default-600'}`}
             >
               {item.name}
             </Link>
@@ -67,23 +70,74 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
       </NavbarContent>
 
       <NavbarContent justify="end">
-        <NavbarItem>
-          <Button as={Link} variant="flat">
-            Log In
-          </Button>
-        </NavbarItem>
+        {isAuthenticated ? (
+          <>
+            <NavbarItem>
+              <Button
+                as={Link}
+                to="/posts/drafts"
+                color="secondary"
+                variant="flat"
+                startContent={<BookDashed size={16} />}
+              >
+                Draft Posts
+              </Button>
+            </NavbarItem>
+
+            <NavbarItem>
+              <Button as={Link} to="/posts/new" color="primary" variant="flat" startContent={<Plus size={16} />}>
+                New Post
+              </Button>
+            </NavbarItem>
+
+            <NavbarItem>
+              <Dropdown placement="bottom-end">
+                <DropdownTrigger>
+                  <Avatar
+                    isBordered
+                    as="button"
+                    className="transition-transform"
+                    src={userProfile?.avatar}
+                    name={userProfile?.name}
+                  />
+                </DropdownTrigger>
+
+                <DropdownMenu aria-label="User menu">
+                  <DropdownItem key="drafts" startContent={<Edit3 size={16} />}>
+                    <Link to="/posts/drafts">My Drafts</Link>
+                  </DropdownItem>
+                  <DropdownItem
+                    key="logout"
+                    startContent={<LogOut size={16} />}
+                    className="text-danger"
+                    color="danger"
+                    onPress={onLogout}
+                  >
+                    Log Out
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </NavbarItem>
+          </>
+        ) : (
+          <>
+            <NavbarItem>
+              <Button as={Link} to="/login" variant="flat">
+                Log In
+              </Button>
+            </NavbarItem>
+          </>
+        )}
       </NavbarContent>
 
+      {/* Display menu items on small screens */}
       <NavbarMenu>
         {menuItems.map((item) => (
           <NavbarMenuItem key={item.path}>
             <Link
               to={item.path}
-              className={`w-full ${
-                location.pathname === item.path
-                  ? 'text-primary'
-                  : 'text-default-600'
-              }`}
+              className={`w-full ${location.pathname === item.path ? 'text-primary' : 'text-default-600'}`}
+              onClick={() => setIsMenuOpen(false)}
             >
               {item.name}
             </Link>
