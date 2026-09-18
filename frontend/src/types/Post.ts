@@ -17,3 +17,15 @@ export interface Post {
   updatedAt: string;
   status?: PostStatus;
 }
+
+export interface CreatePostRequest {
+  title: string;
+  content: string;
+  categoryId: string;
+  tagIds: string[];
+  status: PostStatus;
+}
+
+export interface UpdatePostRequest extends CreatePostRequest {
+  id: string;
+}
