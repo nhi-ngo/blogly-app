@@ -1,21 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Card,
-  CardBody,
-  Input,
-  Select,
-  SelectItem,
-  Chip,
-  SelectSection,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from '@nextui-org/react';
+import { Button, Card, CardBody, Input, Select, SelectItem, Chip, SelectSection } from '@nextui-org/react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Heading, { Level } from '@tiptap/extension-heading';
 import BulletList from '@tiptap/extension-bullet-list';
 import OrderedList from '@tiptap/extension-ordered-list';
 import ListItem from '@tiptap/extension-list-item';
@@ -23,7 +9,7 @@ import { Category } from '../types/Category';
 import { Post } from '../types/Post';
 import { PostStatus } from '../types/PostStatus';
 import { Tag } from '../types/Tag';
-import { Bold, Italic, Undo, Redo, List, ListOrdered, ChevronDown, X } from 'lucide-react';
+import { Bold, Italic, Undo, Redo, List, ListOrdered, X } from 'lucide-react';
 
 interface PostFormProps {
   initialPost?: Post | null;
@@ -56,14 +42,9 @@ const PostForm: React.FC<PostFormProps> = ({
 
   const editor = useEditor({
     extensions: [
-      // Disable default heading to use our custom config
       StarterKit.configure({
-        heading: false,
         bulletList: false,
         orderedList: false,
-      }),
-      Heading.configure({
-        levels: [1, 2, 3],
       }),
       BulletList.configure({
         keepMarks: true,
@@ -136,10 +117,6 @@ const PostForm: React.FC<PostFormProps> = ({
     setSelectedTags(selectedTags.filter((tag) => tag !== tagToRemove));
   };
 
-  const handleHeadingSelect = (level: Level) => {
-    editor?.chain().focus().toggleHeading({ level }).run();
-  };
-
   const suggestedTags = availableTags.filter((tag) => !selectedTags.includes(tag)).slice(0, 5);
 
   return (
@@ -157,27 +134,9 @@ const PostForm: React.FC<PostFormProps> = ({
             />
           </div>
 
-          <div className="space-y-2">
+          {/* START Editor */}
+          <div className="w-full">
             <div className="bg-default-100 p-2 rounded-lg mb-2 flex gap-2 flex-wrap items-center">
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button variant="flat" size="sm" endContent={<ChevronDown size={16} />}>
-                    Heading
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu onAction={(key) => handleHeadingSelect(Number(key))} aria-label="Heading levels">
-                  <DropdownItem key="1" className={editor?.isActive('heading', { level: 1 }) ? 'bg-default-200' : ''}>
-                    Heading 1
-                  </DropdownItem>
-                  <DropdownItem key="2" className={editor?.isActive('heading', { level: 2 }) ? 'bg-default-200' : ''}>
-                    Heading 2
-                  </DropdownItem>
-                  <DropdownItem key="3" className={editor?.isActive('heading', { level: 3 }) ? 'bg-default-200' : ''}>
-                    Heading 3
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-
               <Button
                 size="sm"
                 isIconOnly
@@ -187,6 +146,7 @@ const PostForm: React.FC<PostFormProps> = ({
               >
                 <Bold size={16} />
               </Button>
+
               <Button
                 size="sm"
                 isIconOnly
@@ -225,6 +185,7 @@ const PostForm: React.FC<PostFormProps> = ({
               >
                 <Undo size={16} />
               </Button>
+
               <Button
                 size="sm"
                 isIconOnly
@@ -240,6 +201,7 @@ const PostForm: React.FC<PostFormProps> = ({
 
             {errors.content && <div className="text-danger text-sm">{errors.content}</div>}
           </div>
+          {/* END Editor */}
 
           <div className="space-y-2">
             <Select
