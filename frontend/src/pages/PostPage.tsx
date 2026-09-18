@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { Post } from '../types/Post';
 import { postService } from '../services/postService';
 import { Card, CardHeader, CardBody, CardFooter, Chip, Button, Divider, Avatar } from '@nextui-org/react';
-import { Calendar, Clock, Tag, Edit, Trash, ArrowLeft, Share } from 'lucide-react';
+import { Calendar, Clock, Tag, Edit, Trash, ArrowLeft } from 'lucide-react';
 
 interface PostPageProps {
   isAuthenticated?: boolean;
@@ -12,9 +12,12 @@ interface PostPageProps {
 
 const PostPage: React.FC<PostPageProps> = ({ isAuthenticated }) => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
   const [post, setPost] = useState<Post | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -51,15 +54,103 @@ const PostPage: React.FC<PostPageProps> = ({ isAuthenticated }) => {
     };
   };
 
+  if (loading) {
+    return (
+      <div className="max-w-4xl mx-auto px-4">
+        <Card className="w-full animate-pulse">
+          <CardBody>
+            <div className="h-8 bg-default-200 rounded w-3/4 mb-4"></div>
+            <div className="space-y-3">
+              <div className="h-4 bg-default-200 rounded w-full"></div>
+              <div className="h-4 bg-default-200 rounded w-full"></div>
+              <div className="h-4 bg-default-200 rounded w-2/3"></div>
+            </div>
+          </CardBody>
+        </Card>
+      </div>
+    );
+  }
+
   if (error || !post) {
     return <div>Error or No post</div>;
+  }
+
+  const handleDelete = async () => {
+    if (!post || !window.confirm('Are you sure you want to delete this post?')) {
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      await postService.deletePost(post.id);
+      navigate('/');
+    } catch (err) {
+      setError('Failed to delete the post. Please try again later.');
+      setIsDeleting(false);
+    }
+  };
+
+  if (error || !post) {
+    return (
+      <div className="max-w-4xl mx-auto px-4">
+        <Card>
+          <CardBody>
+            <p className="text-danger">{error || 'Post not found'}</p>
+            <Button
+              as={Link}
+              to="/"
+              color="primary"
+              variant="flat"
+              startContent={<ArrowLeft size={16} />}
+              className="mt-4"
+            >
+              Back to Home
+            </Button>
+          </CardBody>
+        </Card>
+      </div>
+    );
   }
 
   return (
     <div className="max-w-4xl mx-auto px-4">
       <Card className="w-full">
-        <CardHeader>
+        <CardHeader className="flex flex-col items-start gap-3">
+          <div className="flex justify-between w-full">
+            <Button as={Link} to="/" variant="flat" startContent={<ArrowLeft size={16} />} size="sm">
+              Back to Posts
+            </Button>
+
+            <div className="flex gap-2">
+              {isAuthenticated && (
+                <>
+                  <Button
+                    as={Link}
+                    to={`/posts/${post.id}/edit`}
+                    color="primary"
+                    variant="flat"
+                    startContent={<Edit size={16} />}
+                    size="sm"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    color="danger"
+                    variant="flat"
+                    startContent={<Trash size={16} />}
+                    onClick={handleDelete}
+                    isLoading={isDeleting}
+                    size="sm"
+                  >
+                    Delete
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+
           <h1 className="text-3xl font-bold">{post.title}</h1>
+
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Avatar name={post.author?.name} size="sm" />
@@ -76,17 +167,19 @@ const PostPage: React.FC<PostPageProps> = ({ isAuthenticated }) => {
           </div>
         </CardHeader>
 
+        <Divider />
+
         <CardBody>
-          {post && <div className="prose max-w-none" dangerouslySetInnerHTML={createSanitizedHTML(post.content)} />}
+          <div className="prose max-w-none" dangerouslySetInnerHTML={createSanitizedHTML(post.content)} />
         </CardBody>
 
         <CardFooter className="flex flex-col items-start gap-4">
           <Divider />
           <div className="flex flex-wrap gap-2">
             <Chip color="primary" variant="flat">
-              {post?.category.name}
+              {post.category.name}
             </Chip>
-            {post?.tags.map((tag) => (
+            {post.tags.map((tag) => (
               <Chip key={tag.id} variant="flat" startContent={<Tag size={14} />}>
                 {tag.name}
               </Chip>
