@@ -91,7 +91,7 @@ const NavBar: React.FC<NavBarProps> = ({ isAuthenticated, userProfile, onLogout 
             </NavbarItem>
 
             <NavbarItem>
-              <Dropdown placement="bottom-end">
+              <Dropdown placement="bottom-end" shouldBlockScroll={false}>
                 <DropdownTrigger>
                   <Avatar
                     isBordered
