@@ -28,8 +28,20 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
   ];
 
   return (
-    <Navbar className="mb-6">
-      <NavbarContent justify="start">
+    <Navbar isBordered className="mb-6">
+      <NavbarContent className="sm:hidden" justify="start">
+        <NavbarMenuToggle />
+      </NavbarContent>
+
+      <NavbarContent className="sm:hidden pr-3" justify="center">
+        <NavbarBrand>
+          <Link to="/" className="font-bold text-inherit">
+            Blogly
+          </Link>
+        </NavbarBrand>
+      </NavbarContent>
+
+      <NavbarContent className="hidden sm:flex gap-4" justify="start">
         <NavbarBrand>
           <Link to="/" className="font-bold text-inherit">
             Blogly
@@ -61,6 +73,23 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
           </Button>
         </NavbarItem>
       </NavbarContent>
+
+      <NavbarMenu>
+        {menuItems.map((item) => (
+          <NavbarMenuItem key={item.path}>
+            <Link
+              to={item.path}
+              className={`w-full ${
+                location.pathname === item.path
+                  ? 'text-primary'
+                  : 'text-default-600'
+              }`}
+            >
+              {item.name}
+            </Link>
+          </NavbarMenuItem>
+        ))}
+      </NavbarMenu>
     </Navbar>
   );
 };
