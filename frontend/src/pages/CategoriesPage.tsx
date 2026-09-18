@@ -111,7 +111,7 @@ const CategoriesPage: React.FC<CategoriesPageProps> = ({ isAuthenticated }) => {
   return (
     <div className="max-w-4xl mx-auto px-4">
       <Card>
-        <CardHeader>
+        <CardHeader className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Categories</h1>
           {isAuthenticated && (
             <Button color="primary" startContent={<Plus size={16} />} onClick={openAddModal}>
