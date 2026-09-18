@@ -1,5 +1,5 @@
 import { apiService } from './apiService';
-import { AuthResponse, LoginRequest } from '../types/Auth';
+import { AuthResponse, LoginRequest, RegisterRequest, RegisterResponse } from '../types/Auth';
 
 class AuthService {
   private api = apiService.getApi();
@@ -10,8 +10,9 @@ class AuthService {
     return response.data;
   }
 
-  public logout(): void {
-    localStorage.removeItem('token');
+  public async register(credentials: RegisterRequest): Promise<RegisterResponse> {
+    const response = await this.api.post<RegisterResponse>('/auth/register', credentials);
+    return response.data;
   }
 }
 
