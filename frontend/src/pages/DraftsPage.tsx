@@ -33,9 +33,6 @@ const DraftsPage: React.FC = () => {
       <Card>
         <CardHeader className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">My Drafts</h1>
-          <Button as={Link} to="/posts/new" color="primary" startContent={<Plus size={16} />}>
-            New Post
-          </Button>
         </CardHeader>
 
         <CardBody>
