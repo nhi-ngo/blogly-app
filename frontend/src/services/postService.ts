@@ -27,6 +27,11 @@ class PostService {
   public async deletePost(id: string): Promise<void> {
     await this.api.delete(`/posts/${id}`);
   }
+
+  public async getDrafts(): Promise<Post[]> {
+    const response = await this.api.get<Post[]>('/posts/drafts');
+    return response.data;
+  }
 }
 
 export const postService = new PostService();
