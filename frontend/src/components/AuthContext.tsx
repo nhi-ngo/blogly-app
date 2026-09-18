@@ -64,8 +64,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsAuthenticated(false);
     setUser(null);
     setToken(null);
-
-    authService.logout(); // This clears the token from authService
   }, []);
 
   const value = {
