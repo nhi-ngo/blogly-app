@@ -34,3 +34,15 @@ build/
 
 # Local configuration
 src/main/resources/application-local.properties
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Java / Maven
+target/
+
+# IDE
+.idea/
+*.iml
