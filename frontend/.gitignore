@@ -12,9 +12,18 @@ dist
 dist-ssr
 *.tsbuildinfo
 *.local
+
+# Environment variables
 .env
 .env.*
 !.env.example
+
+# Java / Maven
+target/
+
+# IDE
+.idea/
+*.iml
 
 # Editor directories and files
 .vscode/*
