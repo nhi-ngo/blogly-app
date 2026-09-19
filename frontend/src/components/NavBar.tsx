@@ -53,7 +53,7 @@ const NavBar: React.FC<NavBarProps> = ({ isAuthenticated, userProfile, onLogout 
       <NavbarContent className="hidden sm:flex gap-4" justify="start">
         <NavbarBrand>
           <Link to="/" className="font-bold text-inherit">
-            Blogly
+            🌱 Blogly 🌱
           </Link>
         </NavbarBrand>
 
